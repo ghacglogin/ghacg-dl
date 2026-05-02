@@ -1,0 +1,16 @@
+[project]
+name = "ghacg-dl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.136.1",
+    "pyyaml>=6.0.3",
+    "uvicorn[standard]>=0.32.0",
+    "yarl>=1.23.0",
+]
+
+[[tool.uv.index]]
+url="https://pypi.tuna.tsinghua.edu.cn/simple"
+default=true
