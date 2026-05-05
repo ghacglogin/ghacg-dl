@@ -7,6 +7,8 @@ FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-bookworm-slim AS builder
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=never \
+    # Ensure uv targets the interpreter that exists in this image
+    UV_PYTHON=python${PYTHON_VERSION} \
     UV_PROJECT_ENVIRONMENT=/app/.venv
 
 WORKDIR /app
