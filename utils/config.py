@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import threading
 import time
+import os
 from pathlib import Path
 
 import yaml
@@ -16,10 +17,6 @@ from pydantic import BaseModel, Field
 TTL: int = 30
 """配置缓存有效期（秒），到期后下次访问会触发 mtime 检查。"""
 
-CONFIG_PATH: Path = Path(__file__).resolve().parent.parent / "config.yaml"
-"""配置文件绝对路径，默认位于项目根目录下的 ``config.yaml``。"""
-
-
 class Config(BaseModel):
     """运行时配置数据模型。"""
 
@@ -27,6 +24,36 @@ class Config(BaseModel):
     ua_blacklist: list[str] = Field(default_factory=list)
     fs_base: list[str] = Field(default_factory=list)
     sign_token: str = Field(default="")
+
+
+def _ensure_config_file(path: Path) -> Path:
+    """确保配置文件存在，不存在时按 :class:`Config` 默认值生成。"""
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8") as f:
+            yaml.safe_dump(
+                Config().model_dump(),
+                f,
+                allow_unicode=True,
+                sort_keys=False,
+            )
+    return path
+
+
+def get_config_path() -> Path:
+    """解析配置文件路径。
+
+    优先使用环境变量 ``CONFIG_PATH``，否则回退到项目根目录下的
+    ``config.yaml``。若目标文件不存在则自动创建并填充默认内容。
+    """
+    if cfg_path := os.environ.get("CONFIG_PATH"):
+        return _ensure_config_file(Path(cfg_path).expanduser().resolve())
+    default_path = Path(__file__).resolve().parent.parent / "config.yaml"
+    return _ensure_config_file(default_path)
+
+
+CONFIG_PATH: Path = get_config_path()
+"""配置文件绝对路径，默认位于项目根目录下的 ``config.yaml``。"""
 
 
 class _ConfigManager:
