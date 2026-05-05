@@ -16,6 +16,7 @@ import hmac
 import time
 from hashlib import sha256
 from typing import Annotated
+from urllib.parse import unquote
 
 from fastapi import Cookie, Header
 
@@ -35,7 +36,9 @@ def verify_session(dl_session: str) -> bool:
         # 未配置密钥时拒绝放行，避免静默降级
         return False
 
-    parts = dl_session.split("|", 1)
+    # 浏览器/下发端会对 cookie value 中的 "|" 做 percent-encoding（%7C），
+    # 而 Starlette 的 Cookie 解析不会自动 unquote，需要先还原再切分。
+    parts = unquote(dl_session).split("|", 1)
     if len(parts) != 2:
         return False
     ts_str, sig_hex = parts
