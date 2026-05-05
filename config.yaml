@@ -1,8 +1,0 @@
-allowed_referrers:
-  - https://ghacg.com/
-ua_blacklist:
-  - curl
-  - aria2
-fs_base:
-  - https://fs.ghacg.com/
-sign_token: "openlist-5dcd7116-e5a4-4498-bc2f-e234f18e93eawSigloBtOcLXwixK5x4pJzZsNFnLKSnakjoKGsdB0ZxR5vZ5k60LlZqGrsYxTehu"
