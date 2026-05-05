@@ -24,6 +24,8 @@ class Config(BaseModel):
     ua_blacklist: list[str] = Field(default_factory=list)
     fs_base: list[str] = Field(default_factory=list)
     sign_token: str = Field(default="")
+    dl_session_secret: str = Field(default="")
+    dl_session_max_age: int = Field(default=14400)
 
 
 def _ensure_config_file(path: Path) -> Path:
